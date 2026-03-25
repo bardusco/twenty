@@ -9,6 +9,16 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
+/**
+ * Validates a redirectTo parameter for embed flows.
+ * Only allows paths under /embed/ to prevent open-redirect attacks.
+ */
+const isValidRedirectTo = (value: string | null): value is string =>
+  isDefined(value) &&
+  (value.startsWith('/embed/') || value === '/embed') &&
+  !value.startsWith('//') &&
+  !value.includes(':');
+
 export const VerifyLoginTokenEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
@@ -29,32 +39,20 @@ export const VerifyLoginTokenEffect = () => {
     }
 
     if (isDefined(loginToken)) {
-      // Timeout to prevent infinite loading in embed flows
-      const safeRedirect =
-        isDefined(redirectTo) &&
-        redirectTo.startsWith('/') &&
-        !redirectTo.startsWith('//') &&
-        !redirectTo.includes(':')
-          ? redirectTo
-          : undefined;
+      const hasEmbedRedirect = isValidRedirectTo(redirectTo);
 
-      const timeoutId = isDefined(safeRedirect)
+      // Timeout to prevent infinite loading in embed flows
+      const timeoutId = hasEmbedRedirect
         ? setTimeout(() => {
             // Timeout: verify took too long, redirect anyway to avoid blank iframe
-            routerNavigate(safeRedirect, { replace: true });
+            routerNavigate(redirectTo, { replace: true });
           }, 15000)
         : undefined;
 
       verifyLoginToken(loginToken).then(() => {
         if (timeoutId) clearTimeout(timeoutId);
-        // Support redirectTo for embed flows (e.g., iframe from Flutter app)
-        // Validate: must be a relative path (starts with /) and not a protocol redirect
-        if (
-          isDefined(redirectTo) &&
-          redirectTo.startsWith('/') &&
-          !redirectTo.startsWith('//') &&
-          !redirectTo.includes(':')
-        ) {
+
+        if (hasEmbedRedirect) {
           routerNavigate(redirectTo, { replace: true });
         }
       });

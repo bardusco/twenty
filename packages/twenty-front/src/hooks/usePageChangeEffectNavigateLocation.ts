@@ -133,6 +133,15 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.BookCallDecision;
   }
 
+  // When /verify has a redirectTo param (embed flows), VerifyLoginTokenEffect
+  // handles navigation. Don't redirect to defaultHomePagePath here — that
+  // would race and land on /objects/companies instead of /embed/object/…
+  // Contract: any caller passing redirectTo on /verify is responsible for its
+  // own post-auth navigation (see VerifyLoginTokenEffect).
+  const isVerifyWithRedirect =
+    isMatchingLocation(location, AppPath.Verify) &&
+    new URLSearchParams(location.search).has('redirectTo');
+
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
     someMatchingLocationOf([
@@ -140,6 +149,9 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
+
+
+    !isVerifyWithRedirect &&
     isLoggedIn &&
     isOnAWorkspace
   ) {
