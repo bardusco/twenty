@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -50,6 +50,9 @@ const EmbedRecordOpenEffect = ({
   objectRecordId: string;
 }) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  // Track the current pending timer so both the initial delay and any
+  // retry timers can be cancelled on cleanup or on prop change.
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!objectNameSingular || !objectRecordId) return;
@@ -64,16 +67,25 @@ const EmbedRecordOpenEffect = ({
           objectNameSingular,
           resetNavigationStack: true,
         });
+        timerRef.current = null;
       } catch (e) {
         if (attempts < 10) {
-          setTimeout(tryOpen, 300);
+          timerRef.current = setTimeout(tryOpen, 300);
+        } else {
+          timerRef.current = null;
         }
       }
     };
 
     // Small delay to let workspace metadata load first
-    const timer = setTimeout(tryOpen, 200);
-    return () => clearTimeout(timer);
+    timerRef.current = setTimeout(tryOpen, 200);
+
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [objectNameSingular, objectRecordId, openRecordInSidePanel]);
 
   return null;

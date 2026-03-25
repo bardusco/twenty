@@ -123,7 +123,6 @@ export const DefaultLayout = () => {
     // Listen for messages from parent (TAU admin) via postMessage
     const handleMessage = (event: MessageEvent) => {
       const { type } = event.data ?? {};
-      console.log('[TAU-EMBED] message received:', type, event.data);
       if (type === 'tau-theme') {
         applyScheme(event.data.colorScheme);
       } else if (type === 'tau-navigate') {

@@ -43,7 +43,7 @@ const StyledHeaderRow = styled.div`
   }
 `;
 
-const StyledBackButton = styled.div`
+const StyledBackButton = styled.button`
   align-items: center;
   cursor: pointer;
   display: flex;
@@ -54,8 +54,18 @@ const StyledBackButton = styled.div`
   font-size: 18px;
   user-select: none;
 
+  /* Reset browser button defaults */
+  background: none;
+  border: none;
+  outline: none;
+
   &:hover {
     color: ${themeCssVariables.font.color.primary};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.font.color.primary};
+    outline-offset: -2px;
   }
 `;
 
@@ -75,8 +85,10 @@ export const EmbedRecordShowPage = () => {
     return null;
   }
 
-  // Show back arrow when navigating away from person (the root record)
-  const canGoBack = objectNameSingular !== 'person';
+  // Show back arrow when there is a browser history entry to return to.
+  // window.history.length > 1 means the user navigated here from another page
+  // within the SPA (e.g. clicked a related-record link from a person record).
+  const canGoBack = window.history.length > 1;
 
   return (
     <RecordComponentInstanceContextsWrapper
@@ -95,7 +107,11 @@ export const EmbedRecordShowPage = () => {
             {/* Compact header with optional back arrow */}
             <StyledHeaderRow>
               {canGoBack && (
-                <StyledBackButton onClick={() => navigate(-1)}>
+                <StyledBackButton
+                  aria-label="Voltar"
+                  tabIndex={0}
+                  onClick={() => navigate(-1)}
+                >
                   ←
                 </StyledBackButton>
               )}

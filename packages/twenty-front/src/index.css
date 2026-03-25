@@ -55,7 +55,16 @@ body.tau-embedded #root {
   overflow: hidden !important;
   max-width: 100vw !important;
 }
-body.tau-embedded * {
+/* Target the specific flex/grid containers that overflow in embed mode.
+   These are the layout containers in the DefaultLayout → RecordShow hierarchy.
+   Using targeted selectors instead of a wildcard to avoid unintended side effects
+   (e.g. breaking input min-width, inline elements, tooltips). */
+body.tau-embedded [data-component="page-container"],
+body.tau-embedded [data-component="page-layout-left-panel"],
+body.tau-embedded [data-component="record-detail"],
+body.tau-embedded [data-component="record-body"],
+body.tau-embedded [data-component="side-panel"],
+body.tau-embedded [data-component="record-page-tab-container"] {
   min-width: 0 !important;
   max-width: 100vw !important;
 }
