@@ -29,8 +29,17 @@ const RecordShowPage = lazy(() =>
   })),
 );
 
-// EmbedRecordShowPage removed — record detail in iframe uses the normal
-// /object/:name/:id route with DefaultLayout (sidebar hidden via isEmbedded check).
+const EmbedRecordPage = lazy(() =>
+  import('~/pages/object-record/EmbedRecordPage').then((module) => ({
+    default: module.EmbedRecordPage,
+  })),
+);
+
+const EmbedRecordShowPage = lazy(() =>
+  import('~/pages/object-record/EmbedRecordShowPage').then((module) => ({
+    default: module.EmbedRecordShowPage,
+  })),
+);
 
 const EmbedHomePage = lazy(() =>
   import('~/pages/object-record/EmbedHomePage').then((module) => ({
@@ -262,7 +271,7 @@ export const useCreateAppRouter = (
             path="/embed/object/:objectNameSingular/:objectRecordId"
             element={
               <LazyRoute>
-                <RecordShowPage />
+                <EmbedRecordShowPage />
               </LazyRoute>
             }
           />

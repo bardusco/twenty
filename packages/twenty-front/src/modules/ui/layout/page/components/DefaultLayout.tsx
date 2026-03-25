@@ -78,6 +78,8 @@ export const DefaultLayout = () => {
   // Uses an allowlist of parent origins to avoid hiding the sidebar for
   // arbitrary embedders. In dev, allows any origin (no referrer check).
   const isEmbedded = (() => {
+    // Detect embed mode by URL path (works regardless of iframe context)
+    if (window.location.pathname.startsWith('/embed')) return true;
     if (window === window.parent) return false;
     try {
       // In same-origin iframes we can read parent.location
@@ -121,6 +123,7 @@ export const DefaultLayout = () => {
     // Listen for messages from parent (TAU admin) via postMessage
     const handleMessage = (event: MessageEvent) => {
       const { type } = event.data ?? {};
+      console.log('[TAU-EMBED] message received:', type, event.data);
       if (type === 'tau-theme') {
         applyScheme(event.data.colorScheme);
       } else if (type === 'tau-navigate') {
