@@ -34,6 +34,39 @@ body.tau-embedded [data-component="page-header"] {
   display: none !important;
 }
 
+/* Fix height chain when page-header is hidden. */
+body.tau-embedded [data-component="page-container"] {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Ensure PageLayoutLeftPanel grid renders SummaryCard correctly */
+body.tau-embedded [data-component="page-layout-left-panel"] {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+/* In embed mode, constrain all content to the iframe viewport width.
+   Without this, flex containers expand beyond the iframe causing horizontal scroll. */
+body.tau-embedded,
+body.tau-embedded #root {
+  overflow: hidden !important;
+  max-width: 100vw !important;
+}
+body.tau-embedded * {
+  min-width: 0 !important;
+  max-width: 100vw !important;
+}
+
+/* Hide the "Open" / "Options" footer bar in embed mode.
+   This footer is rendered by PageLayoutRecordPageRenderer when isInSidePanel=true.
+   In embed mode, "Open" would navigate outside the iframe context. */
+body.tau-embedded [data-component="side-panel-footer"] {
+  display: none !important;
+}
+
 /* Set initial background color based on theme to prevent color flashes
    during iframe load (purple Twenty default → black → white). */
 html.light body {

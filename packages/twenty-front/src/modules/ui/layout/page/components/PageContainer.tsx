@@ -6,4 +6,9 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export { StyledContainer as PageContainer };
+// Wrapper to add data-component for CSS targeting in embed mode
+import { type ComponentProps } from 'react';
+
+export const PageContainer = (props: ComponentProps<typeof StyledContainer>) => (
+  <StyledContainer data-component="page-container" {...props} />
+);

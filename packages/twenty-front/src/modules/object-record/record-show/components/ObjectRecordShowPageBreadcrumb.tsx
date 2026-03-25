@@ -89,6 +89,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   return (
     <StyledEditableTitleContainer>
       <StyledEditableTitlePrefix
+        data-component="breadcrumb-prefix"
         onClick={() => {
           navigateToIndexView();
         }}
@@ -127,7 +128,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
           />
         </FieldContext.Provider>
       </StyledTitle>
-      <StyledPaginationInformation>
+      <StyledPaginationInformation data-component="breadcrumb-pagination">
         {`(${rankInView + 1}/${totalCount})`}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>

@@ -21,7 +21,7 @@ type SidePanelFooterProps = {
 
 export const SidePanelFooter = ({ actions }: SidePanelFooterProps) => {
   return (
-    <StyledContainer>
+    <StyledContainer data-component="side-panel-footer">
       {actions.map((action, index) => (
         <Fragment key={index}>{action}</Fragment>
       ))}

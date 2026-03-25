@@ -45,7 +45,7 @@ export const PageLayoutLeftPanel = ({
   });
 
   return (
-    <StyledContainer>
+    <StyledContainer data-component="page-layout-left-panel">
       <SummaryCard
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         objectRecordId={targetRecordIdentifier.id}
