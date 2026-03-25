@@ -22,3 +22,24 @@ form {
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+/* ── TAU Embed Mode ──────────────────────────────────────────
+   When the CRM is embedded in the TAU admin iframe, hide UI chrome
+   (page header breadcrumb, mobile bottom bar) to maximize content area.
+   The .tau-embedded class is set on <body> by DefaultLayout.tsx
+   when window !== window.parent (iframe detection with origin check).
+*/
+/* Hide the page header bar (breadcrumb "People / Danilo Bardusco") */
+body.tau-embedded [data-component="page-header"] {
+  display: none !important;
+}
+
+/* Set initial background color based on theme to prevent color flashes
+   during iframe load (purple Twenty default → black → white). */
+html.light body {
+  background: #ffffff !important;
+}
+html.dark body {
+  background: #1a1a2e !important;
+}
+

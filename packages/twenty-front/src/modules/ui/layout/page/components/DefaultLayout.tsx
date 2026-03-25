@@ -12,7 +12,8 @@ import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvid
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
-import { Suspense, lazy, useContext } from 'react';
+import { Suspense, lazy, useContext, useEffect } from 'react';
+
 
 const SignInBackgroundMockPage = lazy(() =>
   import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
@@ -25,7 +26,7 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
@@ -68,6 +69,73 @@ export const DefaultLayout = () => {
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
   const { theme } = useContext(ThemeContext);
+  const navigate = useNavigate();
+
+  // Hide navigation drawer when embedded in an iframe by TAU admin panel.
+  // NOTE: In production, the reverse proxy (Traefik) must set
+  // Content-Security-Policy: frame-ancestors 'self' *.taubot.ai
+  // to restrict which sites can embed this app in an iframe.
+  // Uses an allowlist of parent origins to avoid hiding the sidebar for
+  // arbitrary embedders. In dev, allows any origin (no referrer check).
+  const isEmbedded = (() => {
+    if (window === window.parent) return false;
+    try {
+      // In same-origin iframes we can read parent.location
+      const parentOrigin = window.parent.location.origin;
+      return parentOrigin.includes('taubot.ai');
+    } catch {
+      // Cross-origin: check document.referrer as best-effort
+      const ref = document.referrer || '';
+      const isDev = process.env.NODE_ENV !== 'production';
+      return ref.includes('taubot.ai') || (isDev && (ref.includes('localhost') || ref.includes('0.0.0.0')));
+    }
+  })();
+
+  // When embedded, add a class to body so we can hide UI chrome (header, etc.)
+  // via CSS without modifying deep component trees.
+  if (isEmbedded) {
+    document.body.classList.add('tau-embedded');
+  } else {
+    document.body.classList.remove('tau-embedded');
+  }
+
+  // Apply theme from URL query param (set by Flutter on iframe creation)
+  // and listen for runtime theme changes via postMessage.
+  useEffect(() => {
+    if (!isEmbedded) return;
+
+    const applyScheme = (scheme: string) => {
+      if (scheme !== 'dark' && scheme !== 'light') return;
+      const root = document.documentElement;
+      root.classList.toggle('dark', scheme === 'dark');
+      root.classList.toggle('light', scheme === 'light');
+    };
+
+    // Read initial theme from URL query param (?theme=dark|light)
+    const params = new URLSearchParams(window.location.search);
+    const urlTheme = params.get('theme');
+    if (urlTheme) {
+      applyScheme(urlTheme);
+    }
+
+    // Listen for messages from parent (TAU admin) via postMessage
+    const handleMessage = (event: MessageEvent) => {
+      const { type } = event.data ?? {};
+      if (type === 'tau-theme') {
+        applyScheme(event.data.colorScheme);
+      } else if (type === 'tau-navigate') {
+        // Navigate to a new path within the SPA without full reload
+        // e.g., { type: 'tau-navigate', path: '/embed/object/person/xxx' }
+        const path = event.data.path;
+        if (typeof path === 'string' && path.startsWith('/')) {
+          navigate(path);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [isEmbedded, navigate]);
 
   return (
     <>
@@ -97,7 +165,7 @@ export const DefaultLayout = () => {
                   <StyledNavigationDrawerWrapper>
                     <SignInAppNavigationDrawerMock />
                   </StyledNavigationDrawerWrapper>
-                ) : useShowFullScreen ? null : (
+                ) : (useShowFullScreen || isEmbedded) ? null : (
                   <StyledNavigationDrawerWrapper>
                     <AppNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
@@ -126,7 +194,7 @@ export const DefaultLayout = () => {
                 )}
               </PageDragDropProvider>
             </StyledPageContainer>
-            {isMobile && !showAuthModal && <MobileNavigationBar />}
+            {isMobile && !showAuthModal && !isEmbedded && <MobileNavigationBar />}
           </AppErrorBoundary>
         </StyledLayout>
       </FileUploadProvider>
