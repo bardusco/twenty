@@ -42,7 +42,7 @@ export const CleanSuspendedWorkspaceEmail = ({
         <Trans id="All data in this workspace has been permanently deleted." />
         <br />
         <br />
-        <Trans id="If you wish to use Twenty again, you can create a new workspace." />
+        <Trans id="Se você deseja usar o TAU CRM novamente, pode criar um novo workspace." />
       </MainText>
       <br />
       <CallToAction

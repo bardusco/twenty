@@ -63,9 +63,9 @@ export const FooterNote = () => {
   if (!isOnAWorkspace) {
     return (
       <StyledCopyContainer>
-        <Trans>By using Twenty, you agree to the</Trans>{' '}
+        <Trans>By using TAU CRM, you agree to the</Trans>{' '}
         <a
-          href="https://twenty.com/legal/terms"
+          href="https://docs.google.com/document/d/e/2PACX-1vQNYRKoM8AIaKiktSPZPT8oGpSLmiGcqliRv0THFUK8G3pygPP4EkRL9PyQa952NT9XEc_LiHfrt7mi/pub"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -73,7 +73,7 @@ export const FooterNote = () => {
         </a>{' '}
         <Trans>and</Trans>{' '}
         <a
-          href="https://twenty.com/legal/privacy"
+          href="https://docs.google.com/document/d/e/2PACX-1vSiVub5vOWWVNQDh-GL7gBBL7UpQ8x74xw0pC20ZYb3IfX05MhxFAaUDYHXlOhe8oI9Hl19mlTr_Evm/pub"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -95,7 +95,7 @@ export const FooterNote = () => {
         </>
       )}
       <a
-        href="https://twenty.com/legal/privacy"
+        href="https://docs.google.com/document/d/e/2PACX-1vSiVub5vOWWVNQDh-GL7gBBL7UpQ8x74xw0pC20ZYb3IfX05MhxFAaUDYHXlOhe8oI9Hl19mlTr_Evm/pub"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -103,7 +103,7 @@ export const FooterNote = () => {
       </a>
       <StyledSeparator>•</StyledSeparator>
       <a
-        href="https://twenty.com/legal/terms"
+        href="https://docs.google.com/document/d/e/2PACX-1vQNYRKoM8AIaKiktSPZPT8oGpSLmiGcqliRv0THFUK8G3pygPP4EkRL9PyQa952NT9XEc_LiHfrt7mi/pub"
         target="_blank"
         rel="noopener noreferrer"
       >

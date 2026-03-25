@@ -188,11 +188,11 @@ const createWelcomeRichText = ({
             },
             {
               type: 'link',
-              href: 'https://docs.twenty.com/user-guide/introduction',
+              href: 'https://docs.taubot.ai/docs/crm',
               content: [
                 {
                   type: 'text',
-                  text: 'our documentation',
+                  text: 'nossa documentação',
                   styles: {},
                 },
               ],

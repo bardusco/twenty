@@ -2430,8 +2430,8 @@ msgstr "by {author}"
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "By using Twenty, you agree to the"
+msgid "By using TAU CRM, you agree to the"
+msgstr "By using TAU CRM, you agree to the"
 
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -2732,8 +2732,8 @@ msgstr "Chat with AI agents and use AI features"
 
 #. js-lingui-id: xK2nU3
 #: src/pages/settings/updates/SettingsUpdates.tsx
-msgid "Check out our latest releases"
-msgstr "Check out our latest releases"
+msgid "Confira as últimas atualizações"
+msgstr "Confira as últimas atualizações"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -14956,8 +14956,8 @@ msgstr "weeks"
 
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to Twenty"
-msgstr "Welcome to Twenty"
+msgid "Welcome to TAU CRM"
+msgstr "Welcome to TAU CRM"
 
 #. js-lingui-id: t8ZvkC
 #: src/pages/auth/SignInUp.tsx

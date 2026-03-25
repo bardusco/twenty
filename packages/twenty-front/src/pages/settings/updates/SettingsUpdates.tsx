@@ -31,10 +31,10 @@ export const SettingsUpdates = () => {
         <Section>
           <H2Title
             title={t`Releases`}
-            description={t`Check out our latest releases`}
+            description={t`Confira as últimas atualizações`}
           />
           <StyledCardLink
-            href="https://twenty.com/releases"
+            href="https://docs.taubot.ai/docs/crm/atualizacoes"
             target="_blank"
             rel="noopener noreferrer"
           >

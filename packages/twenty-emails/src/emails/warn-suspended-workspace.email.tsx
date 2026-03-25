@@ -51,7 +51,7 @@ export const WarnSuspendedWorkspaceEmail = ({
         <br />
         <br />
         <Trans
-          id="If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+          id="Se você deseja continuar usando o TAU CRM, atualize sua assinatura nos próximos {remainingDays} {dayOrDays}."
           values={{ remainingDays, dayOrDays }}
         />
       </MainText>
