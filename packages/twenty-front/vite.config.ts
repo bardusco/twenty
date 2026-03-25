@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: port,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      allowedHosts: true,
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
             protocol: 'https',

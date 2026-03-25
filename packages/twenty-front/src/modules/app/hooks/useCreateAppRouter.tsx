@@ -7,6 +7,7 @@ import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { EmbedLayout } from '@/ui/layout/page/components/EmbedLayout';
 import { AppPath } from 'twenty-shared/types';
 
 import { lazy } from 'react';
@@ -25,6 +26,15 @@ const RecordIndexPage = lazy(() =>
 const RecordShowPage = lazy(() =>
   import('~/pages/object-record/RecordShowPage').then((module) => ({
     default: module.RecordShowPage,
+  })),
+);
+
+// EmbedRecordShowPage removed — record detail in iframe uses the normal
+// /object/:name/:id route with DefaultLayout (sidebar hidden via isEmbedded check).
+
+const EmbedHomePage = lazy(() =>
+  import('~/pages/object-record/EmbedHomePage').then((module) => ({
+    default: module.EmbedHomePage,
   })),
 );
 
@@ -234,6 +244,25 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <NotFound />
+              </LazyRoute>
+            }
+          />
+          {/* Embed routes — rendered inside DefaultLayout which already hides
+              sidebar/navbar when isEmbedded=true (iframe detection).
+              This ensures RecordShowPage has all required providers/context. */}
+          <Route
+            path="/embed"
+            element={
+              <LazyRoute>
+                <EmbedHomePage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/embed/object/:objectNameSingular/:objectRecordId"
+            element={
+              <LazyRoute>
+                <RecordShowPage />
               </LazyRoute>
             }
           />
