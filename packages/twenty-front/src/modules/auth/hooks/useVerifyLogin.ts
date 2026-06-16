@@ -13,11 +13,12 @@ export const useVerifyLogin = () => {
   const verifyLoginToken = async (loginToken: string) => {
     try {
       await getAuthTokensFromLoginToken(loginToken);
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({
         message: t`Authentication failed`,
       });
       navigate(AppPath.SignInUp);
+      throw error;
     }
   };
 

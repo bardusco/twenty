@@ -61,6 +61,8 @@ type FieldsWidgetProps = {
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
+  const isTauEmbed =
+    isInSidePanel && window.location.pathname.startsWith('/embed/');
 
   const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
@@ -103,6 +105,8 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   ];
 
   const hasFieldsToDisplay = groups.length > 0;
+  const isTauEmbedPerson =
+    isTauEmbed && targetRecord.targetObjectNameSingular === 'person';
 
   if (!hasFieldsToDisplay) {
     return (
@@ -145,16 +149,38 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
               />
             </StyledInlineFieldsPropertyBox>
           ) : (
-            groups.map((group) => (
-              <FieldsWidgetGroupContainer key={group.id} title={group.name}>
-                <StyledPropertyBox>
-                  <FieldsWidgetFieldList
-                    fields={group.fields}
-                    instanceId={instanceId}
-                  />
-                </StyledPropertyBox>
-              </FieldsWidgetGroupContainer>
-            ))
+            groups.map((group) => {
+              const phoneFields = group.fields.filter(
+                ({ fieldMetadataItem }) => fieldMetadataItem.name === 'phones',
+              );
+              const shouldUseTauEmbedCompactFields =
+                isTauEmbedPerson && phoneFields.length > 0;
+
+              return (
+                <FieldsWidgetGroupContainer
+                  key={group.id}
+                  title={group.name}
+                  defaultExpanded={isTauEmbedPerson ? false : true}
+                  collapsedChildren={
+                    shouldUseTauEmbedCompactFields ? (
+                      <StyledPropertyBox>
+                        <FieldsWidgetFieldList
+                          fields={phoneFields}
+                          instanceId={instanceId}
+                        />
+                      </StyledPropertyBox>
+                    ) : undefined
+                  }
+                >
+                  <StyledPropertyBox>
+                    <FieldsWidgetFieldList
+                      fields={group.fields}
+                      instanceId={instanceId}
+                    />
+                  </StyledPropertyBox>
+                </FieldsWidgetGroupContainer>
+              );
+            })
           )}
 
           {shouldShowHiddenFields && (

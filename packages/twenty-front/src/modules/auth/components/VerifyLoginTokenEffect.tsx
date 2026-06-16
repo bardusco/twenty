@@ -41,21 +41,29 @@ export const VerifyLoginTokenEffect = () => {
     if (isDefined(loginToken)) {
       const hasEmbedRedirect = isValidRedirectTo(redirectTo);
 
-      // Timeout to prevent infinite loading in embed flows
       const timeoutId = hasEmbedRedirect
         ? setTimeout(() => {
-            // Timeout: verify took too long, redirect anyway to avoid blank iframe
+            // Timeout: verify took too long, redirect anyway to avoid blank iframe.
             routerNavigate(redirectTo, { replace: true });
           }, 15000)
         : undefined;
 
-      verifyLoginToken(loginToken).then(() => {
-        if (timeoutId) clearTimeout(timeoutId);
+      verifyLoginToken(loginToken)
+        .then(() => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
 
-        if (hasEmbedRedirect) {
-          routerNavigate(redirectTo, { replace: true });
-        }
-      });
+          if (hasEmbedRedirect) {
+            routerNavigate(redirectTo, { replace: true });
+          }
+        })
+        .catch(() => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          // Error feedback/navigation is handled by useVerifyLogin.
+        });
     } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }

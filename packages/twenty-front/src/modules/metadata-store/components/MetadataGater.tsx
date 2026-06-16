@@ -19,14 +19,21 @@ export const MetadataGater = ({ children }: React.PropsWithChildren) => {
 
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
 
+  const isEmbedRoute = location.pathname.startsWith('/embed');
+  const isVerifyWithEmbedRedirect =
+    isMatchingLocation(location, AppPath.Verify) &&
+    new URLSearchParams(location.search).has('redirectTo');
+
   const isOnExcludedPath =
+    isVerifyWithEmbedRedirect ||
     isMatchingLocation(location, AppPath.Verify) ||
     isMatchingLocation(location, AppPath.VerifyEmail) ||
     isMatchingLocation(location, AppPath.CreateWorkspace);
 
-  const shouldShowLoader =
-    (!isAppMetadataReady && isLoggedIn && !isOnExcludedPath) ||
-    objectMetadataItems.length === 0;
+  const shouldShowLoader = isEmbedRoute
+    ? false
+    : (!isAppMetadataReady && isLoggedIn && !isOnExcludedPath) ||
+      objectMetadataItems.length === 0;
 
   if (shouldShowLoader) {
     return <UserOrMetadataLoader />;

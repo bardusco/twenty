@@ -38,8 +38,19 @@ class CookieStorage {
       return cookieValue;
     }
 
-    // Fall back to memory store in iframe contexts
+    // Fall back in iframe contexts. sessionStorage survives SPA route
+    // transitions and Vite/HMR module reloads in dev, while memoryStore covers
+    // browsers that block Web Storage in third-party frames.
     if (this.isThirdPartyContext) {
+      try {
+        const sessionValue = window.sessionStorage.getItem(key);
+        if (sessionValue) {
+          return sessionValue;
+        }
+      } catch {
+        // Ignore storage access errors and use memory fallback below.
+      }
+
       return this.memoryStore.get(key);
     }
 
@@ -62,8 +73,14 @@ class CookieStorage {
     // Try to set cookie (may silently fail in third-party context)
     Cookies.set(key, value, secureAttributes);
 
-    // Always store in memory as fallback
+    // Always store a fallback for iframe contexts where cookies may be
+    // blocked or unavailable to JavaScript after the verify redirect.
     if (this.isThirdPartyContext) {
+      try {
+        window.sessionStorage.setItem(key, value);
+      } catch {
+        // Ignore storage access errors and still keep the in-memory fallback.
+      }
       this.memoryStore.set(key, value);
     }
   }
@@ -71,6 +88,11 @@ class CookieStorage {
   removeItem(key: string, attributes?: Cookies.CookieAttributes): void {
     this.keys.delete(key);
     Cookies.remove(key, attributes);
+    try {
+      window.sessionStorage.removeItem(key);
+    } catch {
+      // Ignore storage access errors.
+    }
     this.memoryStore.delete(key);
   }
 

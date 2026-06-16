@@ -101,6 +101,8 @@ export const DefaultLayout = () => {
     document.body.classList.remove('tau-embedded');
   }
 
+  const effectiveShowAuthModal = showAuthModal && !isEmbedded;
+
   // Apply theme from URL query param (set by Flutter on iframe creation)
   // and listen for runtime theme changes via postMessage.
   useEffect(() => {
@@ -162,8 +164,8 @@ export const DefaultLayout = () => {
               }}
             >
               <PageDragDropProvider>
-                {!showAuthModal && <KeyboardShortcutMenu />}
-                {showAuthModal ? (
+                {!effectiveShowAuthModal && <KeyboardShortcutMenu />}
+                {effectiveShowAuthModal ? (
                   <StyledNavigationDrawerWrapper>
                     <SignInAppNavigationDrawerMock />
                   </StyledNavigationDrawerWrapper>
@@ -172,7 +174,7 @@ export const DefaultLayout = () => {
                     <AppNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
                 )}
-                {showAuthModal ? (
+                {effectiveShowAuthModal ? (
                   <>
                     <StyledMainContainer>
                       <Suspense fallback={null}>
@@ -196,7 +198,7 @@ export const DefaultLayout = () => {
                 )}
               </PageDragDropProvider>
             </StyledPageContainer>
-            {isMobile && !showAuthModal && !isEmbedded && <MobileNavigationBar />}
+            {isMobile && !effectiveShowAuthModal && !isEmbedded && <MobileNavigationBar />}
           </AppErrorBoundary>
         </StyledLayout>
       </FileUploadProvider>

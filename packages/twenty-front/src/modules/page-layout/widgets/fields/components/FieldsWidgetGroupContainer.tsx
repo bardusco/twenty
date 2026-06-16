@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -30,18 +30,35 @@ type FieldsWidgetGroupContainerProps = {
   children: React.ReactNode;
   title: string;
   defaultExpanded?: boolean;
+  collapsedChildren?: React.ReactNode;
 };
 
 export const FieldsWidgetGroupContainer = ({
   children,
   title,
   defaultExpanded = true,
+  collapsedChildren,
 }: FieldsWidgetGroupContainerProps) => {
   const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   const handleToggleGroup = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
+
+  useEffect(() => {
+    if (!window.location.pathname.startsWith('/embed/')) {
+      return;
+    }
+
+    window.parent?.postMessage(
+      {
+        type: 'tau-crm-fields-group-toggle',
+        title,
+        isExpanded,
+      },
+      '*',
+    );
+  }, [isExpanded, title]);
 
   return (
     <Section>
@@ -54,6 +71,7 @@ export const FieldsWidgetGroupContainer = ({
           />
         </StyledChevronWrapper>
       </StyledHeader>
+      {!isExpanded && collapsedChildren}
       <AnimatedExpandableContainer
         isExpanded={isExpanded}
         initial={false}

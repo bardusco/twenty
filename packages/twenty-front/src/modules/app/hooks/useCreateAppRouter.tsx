@@ -131,6 +131,24 @@ export const useCreateAppRouter = (
         // to set scroll position before the page is rendered
         loader={async () => Promise.resolve(null)}
       >
+        <Route element={<EmbedLayout />}>
+          <Route
+            path="/embed"
+            element={
+              <LazyRoute>
+                <EmbedHomePage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/embed/object/:objectNameSingular/:objectRecordId"
+            element={
+              <LazyRoute>
+                <EmbedRecordShowPage />
+              </LazyRoute>
+            }
+          />
+        </Route>
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyLoginTokenEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
@@ -253,25 +271,6 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <NotFound />
-              </LazyRoute>
-            }
-          />
-          {/* Embed routes — rendered inside DefaultLayout which already hides
-              sidebar/navbar when isEmbedded=true (iframe detection).
-              This ensures RecordShowPage has all required providers/context. */}
-          <Route
-            path="/embed"
-            element={
-              <LazyRoute>
-                <EmbedHomePage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path="/embed/object/:objectNameSingular/:objectRecordId"
-            element={
-              <LazyRoute>
-                <EmbedRecordShowPage />
               </LazyRoute>
             }
           />
